@@ -63,7 +63,7 @@ Met vriendelijke groet,
 
 Ik heb de website van {{companyName}} geanalyseerd. Eén bevinding springt eruit: {{specificInsight}}.
 
-Uw website scoort {{overallScore}}/100. Bedrijven in de {{industry}} die dit soort punten aanpakken, zien gemiddeld {{estimatedImpact}}. De belangrijkste stap voor {{companyName}}: {{improvementArea}}.
+Bedrijven in de {{industry}} die dit soort punten aanpakken, zien gemiddeld {{estimatedImpact}}. De belangrijkste stap voor {{companyName}}: {{improvementArea}}.
 
 Ik heb de volledige analyse met concrete aanbevelingen klaargezet. Zullen we 15 minuten bellen zodat ik u door de bevindingen loop?
 
@@ -197,7 +197,7 @@ Kind regards,
 
 I analyzed {{companyName}}'s website. One finding stands out: {{specificInsight}}.
 
-Your website scores {{overallScore}}/100. Businesses in {{industry}} that address these issues typically see {{estimatedImpact}}. The single most impactful step for {{companyName}}: {{improvementArea}}.
+Businesses in {{industry}} that address these issues typically see {{estimatedImpact}}. The single most impactful step for {{companyName}}: {{improvementArea}}.
 
 I have the full analysis with concrete recommendations ready. Shall we schedule a 15-minute call so I can walk you through the findings?
 
