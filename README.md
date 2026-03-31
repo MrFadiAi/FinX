@@ -9,6 +9,8 @@
 
   [ العربية ](README_AR.md) | English
 
+  [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support%20the%20project-FFDD00?style=flat&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/mrarabai)
+
   ---
 </div>
 
@@ -441,6 +443,12 @@ netstat -ano | grep ":3001" | grep LISTENING
 taskkill /F /PID <PID>
 npm run dev
 ```
+
+## Support the Project
+
+If FindX helped you, consider buying me a coffee:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buymeacoffee&style=for-the-badge)](https://buymeacoffee.com/mrarabai)
 
 ## License
 

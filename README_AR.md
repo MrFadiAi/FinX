@@ -11,6 +11,8 @@
 
   العربية | [ English ](README.md)
 
+  [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ادعم%20المشروع-FFDD00?style=flat&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/mrarabai)
+
   ---
 </div>
 
@@ -254,6 +256,12 @@ docker compose down
 docker compose up -d
 docker compose logs postgres
 ```
+
+## ادعم المشروع
+
+إذا ساعدك FindX، فكر في دعمني بقهوة:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buymeacoffee&style=for-the-badge)](https://buymeacoffee.com/mrarabai)
 
 ## الترخيص
 
