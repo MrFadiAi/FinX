@@ -58,7 +58,7 @@ type Tab = "pipeline" | "agents";
 export default function AgentsPage() {
   const [tab, setTab] = useState<Tab>("pipeline");
   const [query, setQuery] = useState("");
-  const [maxResults, setMaxResults] = useState<string>("");
+  const [maxResults, setMaxResults] = useState<string>("5");
   const [language, setLanguage] = useState<"nl" | "en">("nl");
   const [running, setRunning] = useState(false);
   const [runs, setRuns] = useState<AgentPipelineRun[]>([]);

@@ -1,8 +1,36 @@
 # FindX
 
-AI-powered business prospecting platform for the Netherlands market. FindX discovers Dutch businesses, analyzes their websites, and generates personalized outreach emails — fully automated.
+<div align="center">
+  <img src="images/dashboard.png" alt="FindX Dashboard" width="100%" />
+
+  **Stop cold-calling. Start AI-prospecting.**
+
+  FindX discovers Dutch businesses, analyzes their websites, and writes personalized outreach emails — all on autopilot.
+
+  [ العربية ](README_AR.md) | English
+
+  ---
+</div>
+
+<p align="center">
+  <img src="images/agent-pipeline.png" alt="Agent Pipeline" width="100%" />
+</p>
+
+## How It Works
+
+Three AI agents work in sequence, fully automated:
+
+1. **Research Agent** — Finds businesses matching your query (e.g., "restaurants in Amsterdam") via KVK & Google Places APIs
+2. **Analysis Agent** — Audits each website with Lighthouse, detects tech stack, scores 0–100, identifies opportunities
+3. **Outreach Agent** — Writes personalized cold emails referencing specific findings (e.g., *"Uw website laadt in 8.2 seconden"*)
 
 **Discover → Analyze → Outreach → Track**
+
+<p align="center">
+  <img src="images/pipeline-kanban.png" alt="Pipeline Kanban Board" width="100%" />
+</p>
+
+Manage every lead through a drag-and-drop Kanban board — from discovery to won/lost.
 
 ---
 
