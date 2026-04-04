@@ -224,3 +224,12 @@ export interface AgentLog {
 }
 
 export const AGENT_PIPELINE_STAGES = PIPELINE_STAGES;
+
+// --- Email Provider ---
+
+export interface EmailProviderStatus {
+  provider: string;
+  configured: boolean;
+  connected: boolean;
+  email: string | null;
+}

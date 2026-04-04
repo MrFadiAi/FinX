@@ -188,3 +188,16 @@ model AgentLog {
   @@index([agentId])
   @@index([createdAt])
 }
+
+model EmailProviderToken {
+  id           String    @id @default(cuid())
+  provider     String    @unique
+  accessToken  String
+  refreshToken String
+  scope        String
+  tokenType    String    @default("Bearer")
+  expiryDate   DateTime?
+  email        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

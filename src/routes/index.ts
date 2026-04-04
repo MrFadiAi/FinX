@@ -26,6 +26,19 @@ import {
   getAgentRun,
   getAgentRunEmails,
 } from "../agents/orchestrator/service.js";
+import {
+  getAuthorizationUrl,
+  exchangeCodeForTokens,
+  getStoredTokens,
+  saveTokens,
+  deleteTokens,
+  getAuthenticatedClient,
+  getGmailProfile,
+} from "../lib/email/gmail-oauth.js";
+import { resetProviderCache } from "../lib/email/client.js";
+
+// In-memory CSRF state for OAuth flow (single-user, short-lived)
+const oauthStates = new Map<string, { expires: number }>();
 
 // --- Schemas ---
 
@@ -1370,5 +1383,108 @@ export function registerRoutes(app: FastifyInstance) {
         details: err instanceof Error ? err.message : String(err),
       });
     }
+  });
+
+  // ─── Email Provider ─────────────────────────────────────────────────
+
+  // GET /api/email/provider/status
+  app.get("/api/email/provider/status", async (_req, reply) => {
+    const hasGmailCredentials = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+    const hasResendKey = !!process.env.RESEND_API_KEY;
+    const storedTokens = await getStoredTokens();
+
+    let provider: string;
+    let configured: boolean;
+    let connected = false;
+    let email: string | null = null;
+
+    if (hasGmailCredentials && storedTokens) {
+      provider = "gmail";
+      configured = true;
+      connected = true;
+      email = storedTokens.email;
+    } else if (hasGmailCredentials && !storedTokens) {
+      provider = "gmail";
+      configured = true;
+      connected = false;
+    } else if (hasResendKey) {
+      provider = "resend";
+      configured = true;
+      connected = true;
+      email = process.env.EMAIL_FROM || null;
+    } else {
+      provider = "none";
+      configured = false;
+      connected = false;
+    }
+
+    return reply.send({ provider, configured, connected, email });
+  });
+
+  // GET /api/email/gmail/connect
+  app.get("/api/email/gmail/connect", async (_req, reply) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      return reply.status(400).send({ error: "Gmail OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET." });
+    }
+
+    const state = crypto.randomUUID();
+    oauthStates.set(state, { expires: Date.now() + 10 * 60 * 1000 }); // 10 min
+    const url = getAuthorizationUrl(state);
+    return reply.send({ url });
+  });
+
+  // GET /api/email/gmail/callback
+  app.get("/api/email/gmail/callback", async (req, reply) => {
+    const { code, state } = req.query as { code?: string; state?: string };
+
+    if (!code || !state) {
+      return reply.status(400).type("text/html").send("<h1>Error</h1><p>Missing code or state parameter.</p>");
+    }
+
+    // Validate CSRF state
+    const stored = oauthStates.get(state);
+    oauthStates.delete(state);
+    if (!stored || stored.expires < Date.now()) {
+      return reply.status(400).type("text/html").send("<h1>Error</h1><p>Invalid or expired state. Please try again.</p>");
+    }
+
+    try {
+      const tokens = await exchangeCodeForTokens(code);
+      const client = await getAuthenticatedClient();
+      let gmailEmail: string | undefined;
+      if (client) {
+        gmailEmail = await getGmailProfile(client);
+      }
+
+      await saveTokens({
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        scope: tokens.scope,
+        token_type: tokens.token_type,
+        expiry_date: tokens.expiry_date,
+        email: gmailEmail,
+      });
+
+      resetProviderCache();
+
+      return reply.type("text/html").send(
+        '<html><body><h2 style="font-family:sans-serif;color:#10b981">Gmail connected!</h2>' +
+        '<p style="font-family:sans-serif">You can close this window.</p>' +
+        '<script>window.close()</script></body></html>',
+      );
+    } catch (err) {
+      console.error("[Gmail OAuth] Callback error:", err);
+      return reply.status(500).type("text/html").send(
+        `<html><body><h2 style="font-family:sans-serif;color:#ef4444">Connection failed</h2>` +
+        `<p style="font-family:sans-serif">${err instanceof Error ? err.message : "Unknown error"}</p></body></html>`,
+      );
+    }
+  });
+
+  // POST /api/email/gmail/disconnect
+  app.post("/api/email/gmail/disconnect", async (_req, reply) => {
+    await deleteTokens();
+    resetProviderCache();
+    return reply.send({ disconnected: true });
   });
 }

@@ -1,68 +1,66 @@
-import { Resend } from "resend";
+import { createResendProvider } from "./providers/resend.js";
+import { createGmailProvider } from "./providers/gmail.js";
+import { getStoredTokens } from "./gmail-oauth.js";
+import type { EmailProvider, SendResult } from "./providers/types.js";
 
 const FROM = process.env.EMAIL_FROM || "findx@example.com";
 
-let _resend: Resend | null = null;
+let _cachedProvider: EmailProvider | null = null;
 
-function getResend(): Resend | null {
-  if (!process.env.RESEND_API_KEY) {
-    return null;
+async function getActiveProvider(): Promise<EmailProvider> {
+  if (_cachedProvider) return _cachedProvider;
+
+  // If Gmail OAuth credentials are configured AND tokens exist, use Gmail
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    const tokens = await getStoredTokens();
+    if (tokens) {
+      _cachedProvider = createGmailProvider();
+      return _cachedProvider;
+    }
   }
-  if (!_resend) {
-    _resend = new Resend(process.env.RESEND_API_KEY);
+
+  // Explicit provider choice via env var
+  if (process.env.EMAIL_PROVIDER === "gmail") {
+    _cachedProvider = createGmailProvider();
+    return _cachedProvider;
   }
-  return _resend;
+
+  // Default: Resend
+  _cachedProvider = createResendProvider();
+  return _cachedProvider;
+}
+
+/** Clear the cached provider (call after connect/disconnect Gmail) */
+export function resetProviderCache(): void {
+  _cachedProvider = null;
 }
 
 /**
- * Check whether email sending is configured (RESEND_API_KEY is set).
+ * Check whether email sending is configured.
  */
-export function isEmailConfigured(): boolean {
-  return !!process.env.RESEND_API_KEY;
+export async function isEmailConfigured(): Promise<boolean> {
+  const provider = await getActiveProvider();
+  return provider.isConfigured();
 }
 
 export interface SendEmailResult {
   id: string;
   from: string;
   to: string;
-  /** True when Resend was not configured and the email was simulated */
+  /** True when the provider was not configured and the email was simulated */
   simulated?: boolean;
 }
 
 /**
- * Send an email via Resend.
+ * Send an email via the active provider (Gmail or Resend).
  *
- * If RESEND_API_KEY is not configured the call is **not** an error — instead
+ * If the provider is not configured the call is **not** an error — instead
  * the function logs a warning and returns a mock success response so callers
  * can continue their workflow (e.g. saving the outreach as "saved" rather than
  * failing outright).
  */
 export async function sendEmail(to: string, subject: string, html: string): Promise<SendEmailResult> {
-  const client = getResend();
-
-  if (!client) {
-    console.warn(
-      "[Email] RESEND_API_KEY not configured — email sending is disabled. " +
-      `Simulated send to=${to} subject="${subject}"`,
-    );
-    return {
-      id: `simulated_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-      from: FROM,
-      to,
-      simulated: true,
-    };
-  }
-
-  const result = await client.emails.send({
-    from: FROM,
-    to,
-    subject,
-    html,
-  });
-
-  return {
-    id: result.data?.id ?? "unknown",
-    from: FROM,
-    to,
-  };
+  const provider = await getActiveProvider();
+  const result: SendResult = await provider.send({ to, subject, html });
+  return result;
 }

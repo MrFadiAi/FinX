@@ -10,6 +10,7 @@ import type {
   AgentRunEmail,
   Agent,
   AgentLog,
+  EmailProviderStatus,
 } from "./types";
 
 const BASE = "/api";
@@ -281,4 +282,18 @@ export function clearAllData(): Promise<{
   };
 }> {
   return fetchApi("/data/clear-all", { method: "DELETE" });
+}
+
+// --- Email Provider ---
+
+export function getEmailProviderStatus(): Promise<EmailProviderStatus> {
+  return fetchApi("/email/provider/status");
+}
+
+export function getGmailConnectUrl(): Promise<{ url: string }> {
+  return fetchApi("/email/gmail/connect");
+}
+
+export function disconnectGmail(): Promise<{ disconnected: boolean }> {
+  return fetchApi("/email/gmail/disconnect", { method: "POST" });
 }
