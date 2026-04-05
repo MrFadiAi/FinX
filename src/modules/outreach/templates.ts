@@ -28,393 +28,393 @@ export interface EmailTemplate {
 }
 
 const TEMPLATES: EmailTemplate[] = [
-  // --- Dutch templates (formal "u" register) ---
+  // --- Dutch templates (conversational, professional) ---
   {
     id: "nl_cold_no_website",
-    name: "Cold Outreach — Geen Website (NL)",
+    name: "Cold Outreach, geen website (NL)",
     category: "cold_no_website",
     language: "nl",
-    subject: "{{companyName}} is online niet vindbaar",
-    body: `Beste {{contactName}},
+    subject: "{{companyName}} online vindbaar maken",
+    body: `Hi {{contactName}},
 
-Ik onderzoek de online aanwezigheid van {{industry}}-bedrijven in {{city}}. Daarbij viel me op dat {{companyName}} geen website heeft.
+Ik keek recent naar de online aanwezigheid van {{industry}}-bedrijven in {{city}}. Wat me opviel: {{companyName}} heeft geen website.
 
-In de {{industry}} zoekt 7 van de 10 klanten online naar een aanbieder. Zonder website bent u onvindbaar voor die groep. Concurrenten in {{city}} met een website ontvangen die aanvragen automatisch.
+In de {{industry}} zoekt 7 van de 10 klanten online naar een aanbieder. Zonder website bereikt u die groep niet. Concurrenten in {{city}} met een website krijgen die aanvragen al binnen.
 
 Ik kan voor {{companyName}} een website opzetten die:
 - Gevonden wordt bij lokale zoekopdrachten in {{city}}
-- Past bij uw bedrijfsvoering en uitstraling
+- Past bij uw bedrijfsvoering
 - Binnen twee weken online staat
 
-Zal ik u een korte uitleg geven? Een telefoontje van 15 minuten is voldoende.
+Zullen we kort bellen? 15 minuten is genoeg om de mogelijkheden te bespreken.
 
 [Plan een gesprek]({{meetingLink}})
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_cold_has_website",
-    name: "Cold Outreach — Verbetermogelijkheden (NL)",
+    name: "Cold Outreach, verbetermogelijkheden (NL)",
     category: "cold_has_website",
     language: "nl",
-    subject: "{{specificInsight}} — bevinding bij {{companyName}}",
-    body: `Beste {{contactName}},
+    subject: "Iets opgevallen aan de site van {{companyName}}",
+    body: `Hi {{contactName}},
 
-Ik heb de website van {{companyName}} geanalyseerd. Eén bevinding springt eruit: {{specificInsight}}.
+Ik bekeek de website van {{companyName}} en één ding viel me op: {{specificInsight}}.
 
-Bedrijven in de {{industry}} die dit soort punten aanpakken, zien gemiddeld {{estimatedImpact}}. De belangrijkste stap voor {{companyName}}: {{improvementArea}}.
+Bedrijven in de {{industry}} die dit soort punten aanpakken zien gemiddeld {{estimatedImpact}}. De logische volgende stap voor {{companyName}}: {{improvementArea}}.
 
-Ik heb de volledige analyse met concrete aanbevelingen klaargezet. Zullen we 15 minuten bellen zodat ik u door de bevindingen loop?
+Ik heb de volledige analyse met aanbevelingen klaar. Zullen we 15 min bellen zodat ik de bevindingen kan laten zien?
 
 [Plan een gesprek]({{meetingLink}})
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_followup_1",
-    name: "Follow-Up 1 — 3 dagen (NL)",
+    name: "Follow-Up 1, 3 dagen (NL)",
     category: "followup_1",
     language: "nl",
     subject: "Re: {{originalSubject}}",
-    body: `Beste {{contactName}},
+    body: `Hi {{contactName}},
 
-Ik stuur u een korte follow-up naar aanleiding van mijn analyse van {{companyName}}. Ik begrijp dat u het druk heeft — daarom houd ik het kort.
+Korte follow-up naar aanleiding van mijn analyse van {{companyName}}. Ik snap dat u het druk heeft, daarom houd ik het kort.
 
-De bevindingen blijven actueel. Als u wilt, plan ik graag een moment dat u beter uitkomt.
+De bevindingen blijven actueel. Als het uitkomt plan ik graag een moment dat beter past.
 
 [Plan een gesprek]({{meetingLink}})
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_followup_2",
-    name: "Follow-Up 2 — 7 dagen (NL)",
+    name: "Follow-Up 2, 7 dagen (NL)",
     category: "followup_2",
     language: "nl",
-    subject: "Analyse {{companyName}} — nog één opmerking",
-    body: `Beste {{contactName}},
+    subject: "Nog één ding over {{companyName}}",
+    body: `Hi {{contactName}},
 
-Eén laatste ding. Bij vergelijking met andere {{industry}}-bedrijven in {{city}} valt op dat {{companyName}} een duidelijke kans mist: {{specificInsight}}.
+Nog één ding. Bij vergelijking met andere {{industry}}-bedrijven in {{city}} mist {{companyName}} een duidelijke kans: {{specificInsight}}.
 
-Bedrijven die dit oppakken zien doorgaans {{estimatedImpact}}. Ik bewaar de volledige analyse voor u.
+Bedrijven die dit oppakken zien doorgaans {{estimatedImpact}}. Ik bewaar de analyse voor u.
 
-Mocht u op een later moment geïnteresseerd zijn: [15 min bellen]({{meetingLink}}). Zo niet, dan stuur ik geen verdere berichten.
+Mocht u later geïnteresseerd zijn: [15 min bellen]({{meetingLink}}). Zo niet, dan stuur ik niets meer.
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_breakup",
-    name: "Break-Up — 14 dagen (NL)",
+    name: "Break-Up, 14 dagen (NL)",
     category: "breakup",
     language: "nl",
-    subject: "Afsluiting — analyse {{companyName}}",
-    body: `Beste {{contactName}},
+    subject: "Analyse {{companyName}} bewaard",
+    body: `Hi {{contactName}},
 
 Dit is mijn laatste bericht. Ik begrijp dat de timing nu niet uitkomt.
 
-De analyse van {{companyName}} blijft beschikbaar. Als u in de toekomst de online aanwezigheid wilt verbeteren, kunt u de bevindingen [hier inzien]({{meetingLink}}).
+De analyse van {{companyName}} bewaar ik. Als u later de online aanwezigheid wilt verbeteren kunt u de bevindingen [hier bekijken]({{meetingLink}}).
 
 Veel succes met {{companyName}}.
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_meeting_confirm",
     name: "Afspraakbevestiging (NL)",
     category: "meeting_confirm",
     language: "nl",
-    subject: "Bevestiging: afspraak over {{companyName}}",
-    body: `Beste {{contactName}},
+    subject: "Afspraak bevestigd: {{companyName}}",
+    body: `Hi {{contactName}},
 
-Bedankt voor uw tijd. Ik bevestig hierbij onze afspraak om de website-analyse van {{companyName}} te bespreken.
+Bedankt voor uw tijd. Onze afspraak om de website-analyse van {{companyName}} te bespreken staat hierbij bevestigd.
 
-Ik loop u dan door de bevindingen en geef concrete suggesties voor verbetering. Het gesprek duurt maximaal 15 minuten.
+Ik loop u door de bevindingen en geef concrete suggesties. Max 15 minuten.
 
 [Bevestig de afspraak]({{meetingLink}})
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
   {
     id: "nl_proposal_followup",
-    name: "Voorstel Follow-Up (NL)",
+    name: "Voorstel follow-up (NL)",
     category: "proposal_followup",
     language: "nl",
-    subject: "Voorstel voor {{companyName}} — samenvatting",
-    body: `Beste {{contactName}},
+    subject: "Samenvatting voorstel voor {{companyName}}",
+    body: `Hi {{contactName}},
 
-Naar aanleiding van ons gesprek stuur ik u hierbij een samenvatting van de verbeterpunten voor {{companyName}}:
+Naar aanleiding van ons gesprek stuur ik u een samenvatting van de verbeterpunten voor {{companyName}}:
 
 {{improvementArea}}
 
-De verwachte impact: {{estimatedImpact}}.
+Verwachte impact: {{estimatedImpact}}.
 
-Ik hoor graag of u met dit voorstel verder wilt gaan.
+Laat me weten of u hiermee verder wilt gaan.
 
 [Bekijk het voorstel]({{meetingLink}})
 
-Met vriendelijke groet,
-{{senderName}} | FindX`,
+Groet,
+{{senderName}}`,
   },
 
-  // --- English templates (professional register) ---
+  // --- English templates (conversational, professional) ---
   {
     id: "en_cold_no_website",
-    name: "Cold Outreach — No Website (EN)",
+    name: "Cold Outreach, no website (EN)",
     category: "cold_no_website",
     language: "en",
-    subject: "{{companyName}} is invisible online",
-    body: `Dear {{contactName}},
+    subject: "Getting {{companyName}} found online",
+    body: `Hi {{contactName}},
 
-I have been reviewing the online presence of {{industry}} businesses in {{city}}. I noticed that {{companyName}} does not have a website.
+I was recently looking at the online presence of {{industry}} businesses in {{city}}. One thing stood out: {{companyName}} doesn't have a website.
 
-In the {{industry}}, 7 out of 10 customers search online for a provider. Without a website, those potential clients find your competitors instead. Businesses in {{city}} with a web presence receive those inquiries by default.
+In the {{industry}}, 7 out of 10 customers search online for a provider. Without a website, those potential clients find your competitors instead. Businesses in {{city}} with a web presence get those inquiries on autopilot.
 
 I can set up a website for {{companyName}} that:
 - Ranks for local searches in {{city}}
-- Reflects your brand and professionalism
-- Is live within two weeks
+- Fits your brand and professionalism
+- Goes live within two weeks
 
-A 15-minute call is enough for me to explain the approach.
+Worth a quick chat? 15 minutes is all I need to walk you through it.
 
 [Book a call]({{meetingLink}})
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_cold_has_website",
-    name: "Cold Outreach — Improvement Opportunities (EN)",
+    name: "Cold Outreach, improvement opportunities (EN)",
     category: "cold_has_website",
     language: "en",
-    subject: "{{specificInsight}} — finding for {{companyName}}",
-    body: `Dear {{contactName}},
+    subject: "Something I noticed about {{companyName}}'s site",
+    body: `Hi {{contactName}},
 
-I analyzed {{companyName}}'s website. One finding stands out: {{specificInsight}}.
+I was looking at {{companyName}}'s website and one thing caught my eye: {{specificInsight}}.
 
-Businesses in {{industry}} that address these issues typically see {{estimatedImpact}}. The single most impactful step for {{companyName}}: {{improvementArea}}.
+Businesses in {{industry}} that fix this typically see {{estimatedImpact}}. The most impactful next step for {{companyName}}: {{improvementArea}}.
 
-I have the full analysis with concrete recommendations ready. Shall we schedule a 15-minute call so I can walk you through the findings?
+I've got the full analysis with concrete recommendations ready. Want to jump on a 15-minute call so I can show you what I found?
 
 [Book a call]({{meetingLink}})
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_followup_1",
-    name: "Follow-Up 1 — 3 days (EN)",
+    name: "Follow-Up 1, 3 days (EN)",
     category: "followup_1",
     language: "en",
     subject: "Re: {{originalSubject}}",
-    body: `Dear {{contactName}},
+    body: `Hi {{contactName}},
 
-A brief follow-up on my analysis of {{companyName}}. I understand you are busy — I will keep this short.
+Quick follow-up on my analysis of {{companyName}}. I know you're busy so I'll keep it brief.
 
-The findings remain relevant. I am happy to schedule a time that works better for you.
+The findings are still relevant. Happy to find a time that works better for you.
 
 [Book a call]({{meetingLink}})
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_followup_2",
-    name: "Follow-Up 2 — 7 days (EN)",
+    name: "Follow-Up 2, 7 days (EN)",
     category: "followup_2",
     language: "en",
-    subject: "Analysis {{companyName}} — one more observation",
-    body: `Dear {{contactName}},
+    subject: "One more thing about {{companyName}}",
+    body: `Hi {{contactName}},
 
-One last thing. Comparing {{companyName}} to other {{industry}} businesses in {{city}}, there is a clear missed opportunity: {{specificInsight}}.
+One more thing. Comparing {{companyName}} to other {{industry}} businesses in {{city}}, there's a clear missed opportunity: {{specificInsight}}.
 
-Companies that act on this typically see {{estimatedImpact}}. I will keep the full analysis on file for you.
+Companies that act on this typically see {{estimatedImpact}}. I'll keep the full analysis on file for you.
 
-If you would like to discuss this later: [15-minute call]({{meetingLink}}). If not, I will not follow up again.
+If you'd like to discuss later: [15-minute call]({{meetingLink}}). If not, no worries, I won't follow up again.
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_breakup",
-    name: "Break-Up — 14 days (EN)",
+    name: "Break-Up, 14 days (EN)",
     category: "breakup",
     language: "en",
-    subject: "Closing — analysis of {{companyName}}",
-    body: `Dear {{contactName}},
+    subject: "Saved the analysis for {{companyName}}",
+    body: `Hi {{contactName}},
 
-This is my last message. I understand the timing may not be right.
+This is my last message. I get that the timing might not be right.
 
-The analysis of {{companyName}} remains available. If you want to improve your online presence in the future, you can [review the findings here]({{meetingLink}}).
+The analysis of {{companyName}} is saved. If you ever want to work on your online presence, you can [review the findings here]({{meetingLink}}).
 
 Wishing {{companyName}} all the best.
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_meeting_confirm",
     name: "Meeting Confirmation (EN)",
     category: "meeting_confirm",
     language: "en",
-    subject: "Confirmation: appointment about {{companyName}}",
-    body: `Dear {{contactName}},
+    subject: "Confirmed: call about {{companyName}}",
+    body: `Hi {{contactName}},
 
-Thank you for your time. This confirms our appointment to discuss the website analysis of {{companyName}}.
+Thanks for your time. Our call to discuss the website analysis of {{companyName}} is confirmed.
 
-I will walk you through the findings and provide concrete improvement suggestions. The call will take no more than 15 minutes.
+I'll walk you through the findings with concrete suggestions. 15 minutes max.
 
 [Confirm the appointment]({{meetingLink}})
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
   {
     id: "en_proposal_followup",
     name: "Proposal Follow-Up (EN)",
     category: "proposal_followup",
     language: "en",
-    subject: "Proposal for {{companyName}} — summary",
-    body: `Dear {{contactName}},
+    subject: "Proposal summary for {{companyName}}",
+    body: `Hi {{contactName}},
 
-Following our conversation, here is a summary of the improvement areas for {{companyName}}:
+Following our conversation, here's a summary of what we discussed for {{companyName}}:
 
 {{improvementArea}}
 
 Expected impact: {{estimatedImpact}}.
 
-Please let me know if you would like to proceed with this proposal.
+Let me know if you'd like to move forward with this.
 
 [View the proposal]({{meetingLink}})
 
-Kind regards,
-{{senderName}} | FindX`,
+Best,
+{{senderName}}`,
   },
 
-  // --- Arabic templates (professional register) ---
+  // --- Arabic templates (conversational, professional) ---
   {
     id: "ar_cold_no_website",
-    name: "Cold Outreach — لا يوجد موقع (AR)",
+    name: "Cold Outreach, لا يوجد موقع (AR)",
     category: "cold_no_website",
     language: "ar",
-    subject: "{{companyName}} غير موجود على الإنترنت",
-    body: `السيد {{contactName}} المحترم،
+    subject: "جعل {{companyName}} ظاهرًا على الإنترنت",
+    body: `مرحبًا {{contactName}},
 
-لقد قمت بمراجعة التواجد الرقمي للشركات في مجال {{industry}} في {{city}}. ولاحظت أن {{companyName}} لا يمتلك موقعًا إلكترونيًا.
+كنت أبحث مؤخرًا في التواجد الرقمي لشركات {{industry}} في {{city}}. لاحظت أن {{companyName}} لا يمتلك موقعًا إلكترونيًا.
 
-في مجال {{industry}}، يبحث 7 من كل 10 عملاء عبر الإنترنت عن مزوّد خدمة. بدون موقع، يتحول هؤلاء العملاء إلى المنافسين. الشركات في {{city}} التي تمتلك مواقع تحصل على هذه الاستفسارات تلقائيًا.
+في مجال {{industry}}، يبحث 7 من كل 10 عملاء عبر الإنترنت عن مزوّد خدمة. بدون موقع، يذهب هؤلاء العملاء إلى المنافسين مباشرة.
 
 يمكنني إنشاء موقع لـ {{companyName}}:
 - يظهر في نتائج البحث المحلية في {{city}}
-- يعكس هوية شركتكم واحترافيتكم
+- يعكس هوية شركتكم
 - يكون جاهزًا خلال أسبوعين
 
-مكالمة هاتفية مدتها 15 دقيقة كافية لشرح النهج.
+مكالمة قصيرة مدتها 15 دقيقة كافية لمناقشة الخيارات.
 
 [احجز مكالمة]({{meetingLink}})
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_cold_has_website",
-    name: "Cold Outreach — فرص تحسين (AR)",
+    name: "Cold Outreach, فرص تحسين (AR)",
     category: "cold_has_website",
     language: "ar",
-    subject: "{{specificInsight}} — ملاحظة حول {{companyName}}",
-    body: `السيد {{contactName}} المحترم،
+    subject: "لاحظت شيئًا عن موقع {{companyName}}",
+    body: `مرحبًا {{contactName}},
 
-قمت بتحليل موقع {{companyName}} الإلكتروني. هناك ملاحظة بارزة: {{specificInsight}}.
+كنت أتصفح موقع {{companyName}} الإلكتروني ولاحظت أمرًا واحدًا: {{specificInsight}}.
 
-الشركات في مجال {{industry}} التي تعالج هذه القضايا تشهد عادةً {{estimatedImpact}}. الخطوة الأكثر تأثيرًا لـ {{companyName}}: {{improvementArea}}.
+الشركات في مجال {{industry}} التي تعالج هذه النقطة تشهد عادةً {{estimatedImpact}}. الخطوة التالية المنطقية لـ {{companyName}}: {{improvementArea}}.
 
-لديّ التحليل الكامل مع توصيات عملية جاهزة. هل نحدد مكالمة مدتها 15 دقيقة لأعرض عليكم النتائج؟
+لديّ التحليل الكامل مع توصيات عملية جاهزة. هل نجري مكالمة مدتها 15 دقيقة لأعرض عليكم النتائج؟
 
 [احجز مكالمة]({{meetingLink}})
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_followup_1",
-    name: "Follow-Up 1 — 3 أيام (AR)",
+    name: "Follow-Up 1, 3 أيام (AR)",
     category: "followup_1",
     language: "ar",
     subject: "رد: {{originalSubject}}",
-    body: `السيد {{contactName}} المحترم،
+    body: `مرحبًا {{contactName}},
 
-متابعة سريعة بخصوص تحليلي لـ {{companyName}}. أفهم أنكم مشغولون — سأكون موجزًا.
+متابعة سريعة بخصوص تحليلي لـ {{companyName}}. أفهم أنكم مشغولون، سأكون موجزًا.
 
 النتائج لا تزال ذات صلة. يسعدني تحديد موعد يناسبكم بشكل أفضل.
 
 [احجز مكالمة]({{meetingLink}})
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_followup_2",
-    name: "Follow-Up 2 — 7 أيام (AR)",
+    name: "Follow-Up 2, 7 أيام (AR)",
     category: "followup_2",
     language: "ar",
-    subject: "تحليل {{companyName}} — ملاحظة أخيرة",
-    body: `السيد {{contactName}} المحترم،
+    subject: "شيء أخير بخصوص {{companyName}}",
+    body: `مرحبًا {{contactName}},
 
-ملاحظة أخيرة. عند مقارنة {{companyName}} ببقية شركات {{industry}} في {{city}}، هناك فرصة واضحة ضائعة: {{specificInsight}}.
+شيء أخير. عند مقارنة {{companyName}} ببقية شركات {{industry}} في {{city}}، هناك فرصة واضحة ضائعة: {{specificInsight}}.
 
 الشركات التي تتحرك في هذا الاتجاه تشهد عادةً {{estimatedImpact}}. سأحتفظ بالتحليل الكامل لكم.
 
 إذا رغبتم في المناقشة لاحقًا: [مكالمة 15 دقيقة]({{meetingLink}}). وإلا، لن أتواصل معكم مجددًا.
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_breakup",
-    name: "Break-Up — 14 يوم (AR)",
+    name: "Break-Up, 14 يوم (AR)",
     category: "breakup",
     language: "ar",
-    subject: "ختام — تحليل {{companyName}}",
-    body: `السيد {{contactName}} المحترم،
+    subject: "حفظت تحليل {{companyName}}",
+    body: `مرحبًا {{contactName}},
 
 هذه رسالتي الأخيرة. أفهم أن التوقيت قد لا يكون مناسبًا الآن.
 
-تحليل {{companyName}} لا يزال متاحًا. إذا أردتم تحسين التواجد الرقمي مستقبلًا، يمكنكم [مراجعة النتائج هنا]({{meetingLink}}).
+تحليل {{companyName}} محفوظ. إذا أردتم مستقبلًا تحسين التواجد الرقمي، يمكنكم [مراجعة النتائج هنا]({{meetingLink}}).
 
 أتمنى لـ {{companyName}} كل التوفيق.
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_meeting_confirm",
     name: "تأكيد الموعد (AR)",
     category: "meeting_confirm",
     language: "ar",
-    subject: "تأكيد: موعد بخصوص {{companyName}}",
-    body: `السيد {{contactName}} المحترم،
+    subject: "تأكيد: مكالمة بخصوص {{companyName}}",
+    body: `مرحبًا {{contactName}},
 
-شكرًا على وقتكم. أؤكد هنا موعدنا لمناقشة تحليل موقع {{companyName}} الإلكتروني.
+شكرًا على وقتكم. مكالمتنا لمناقشة تحليل موقع {{companyName}} الإلكتروني مؤكدة.
 
-سأعرض عليكم النتائج وأقدم توصيات عملية للتحسين. لن تستغرق المكالمة أكثر من 15 دقيقة.
+سأعرض عليكم النتائج مع توصيات عملية. 15 دقيقة كحد أقصى.
 
 [تأكيد الموعد]({{meetingLink}})
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
   {
     id: "ar_proposal_followup",
     name: "متابعة العرض (AR)",
     category: "proposal_followup",
     language: "ar",
-    subject: "عرض لـ {{companyName}} — ملخص",
-    body: `السيد {{contactName}} المحترم،
+    subject: "ملخص العرض لـ {{companyName}}",
+    body: `مرحبًا {{contactName}},
 
 بناءً على محادثتنا، إليكم ملخص نقاط التحسين لـ {{companyName}}:
 
@@ -422,12 +422,12 @@ Kind regards,
 
 الأثر المتوقع: {{estimatedImpact}}.
 
-يرجى إعلامي إذا كنتم ترغبون في المضي قدمًا في هذا العرض.
+أخبروني إذا كنتم ترغبون في المضي قدمًا.
 
 [عرض العرض]({{meetingLink}})
 
-مع أطيب التحيات،
-{{senderName}} | FindX`,
+تحياتي،
+{{senderName}}`,
   },
 ];
 

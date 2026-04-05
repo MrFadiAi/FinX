@@ -47,11 +47,11 @@ function buildGenerationPrompt(
   tone: EmailTone,
   language: EmailLanguage,
 ): string {
-  const lang = language === "nl" ? "Dutch" : "English";
+  const langLabel = language === "nl" ? "Dutch" : language === "ar" ? "Arabic" : "English";
   const toneGuide = {
-    professional: "Formal business register. Direct, factual, data-driven. In Dutch: use 'u' (not 'je/jij'). No superlatives.",
-    friendly: "Professional but approachable. Slightly warmer phrasing, but still factual. In Dutch: use 'u'.",
-    urgent: "Matter-of-fact emphasis on what is being lost right now. Stay respectful. In Dutch: use 'u'.",
+    professional: "Conversational and professional. Like a consultant who actually reviewed the site and is sharing what they found. Direct, factual, data-driven. In Dutch: use conversational 'je/jij' register (not formal 'u'). No superlatives, no jargon.",
+    friendly: "Warm and approachable. Like a colleague sharing a helpful observation. Still factual. In Dutch: use 'je/jij'.",
+    urgent: "Matter-of-fact emphasis on what is being lost right now. Stay respectful, not pushy. In Dutch: use 'je/jij'.",
   }[tone];
 
   const contactName = lead.contactName || lead.businessName;
@@ -59,7 +59,7 @@ function buildGenerationPrompt(
   const findingsSummary = lead.findings?.length
     ? lead.findings
         .slice(0, 5)
-        .map((f) => `- [${f.severity}] ${f.category}: ${f.title} — ${f.description}`)
+        .map((f) => `- [${f.severity}] ${f.category}: ${f.title}: ${f.description}`)
         .join("\n")
     : "No detailed analysis available.";
 
@@ -70,7 +70,7 @@ function buildGenerationPrompt(
         .join("\n")
     : "";
 
-  const prompt = `You are a consultant analyzing websites for Dutch SMBs. Based on real audit data, write three short, specific text snippets for a cold outreach email in ${lang}.
+  const prompt = `You are writing a cold outreach email for someone who actually reviewed a business website. Based on real audit data, write three short, specific text snippets in ${langLabel}.
 
 TONE: ${toneGuide}
 
@@ -87,23 +87,24 @@ ${findingsSummary}
 ${opportunitiesSummary ? `\nOPPORTUNITIES:\n${opportunitiesSummary}` : ""}
 
 YOUR TASK:
-Write exactly these 3 fields, referencing real data from the findings above. Be specific and factual.
+Write exactly these 3 fields. Sound like a real person who looked at their website, not a robot filling in a template. Reference real data.
 
 Output a JSON object with exactly these fields:
 {
-  "specificInsight": "One concrete observation pulled from the findings. Must reference an actual metric or fact (e.g. a Lighthouse score, a missing element, a load time). Not a generic compliment. Max 120 chars.",
-  "improvementArea": "The single highest-impact action they can take, derived from the most critical finding. Max 100 chars.",
-  "estimatedImpact": "A realistic, quantified benefit based on industry benchmarks (e.g. '30% meer aanvragen via Google', '2x snellere laadtijd'). No inflated numbers. Max 60 chars."
+  "specificInsight": "One concrete thing you noticed, written conversationally. Like you are telling a friend what you saw. Must reference an actual metric or fact. Not a generic compliment. Max 120 chars. NO em dashes.",
+  "improvementArea": "The single most impactful action they can take. Phrase it as a natural suggestion, not corporate jargon. Max 100 chars.",
+  "estimatedImpact": "A realistic, quantified benefit (e.g. '30% more requests via Google', '2x faster load time'). Keep it believable. Max 60 chars."
 }
 
 Rules:
-- Reference actual findings — every field must contain a specific, verifiable claim
-- For no-website leads: focus on absence of online presence and what competitors gain
-- For low-scoring websites: focus on the highest-severity finding
-- Write in ${lang}
-- No hype words (never use: 'geweldig', 'fantastisch', 'amazing', 'incredible', 'revolutionary')
-- No vague promises ('more customers', 'betere resultaten') — be precise
-- "specificInsight" must sound like a consultant who ran the audit, not a salesperson
+- Reference actual findings. Every field must contain a specific, verifiable claim.
+- For no-website leads: focus on the gap and what competitors gain from being online.
+- For low-scoring websites: focus on the highest-severity finding.
+- Write in ${langLabel}.
+- No hype words (never use: 'geweldig', 'fantastisch', 'amazing', 'incredible', 'revolutionary', 'optimize', 'leverage').
+- No vague promises ('more customers', 'betere resultaten'). Be precise.
+- NEVER use em dashes (" -- " or " — ").
+- "specificInsight" should sound like someone genuinely sharing what they found, not a salesperson.
 
 Respond with ONLY the JSON object, no other text.`;
 

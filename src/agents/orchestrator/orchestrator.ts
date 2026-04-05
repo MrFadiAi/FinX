@@ -33,7 +33,7 @@ export class AgentOrchestrator {
     const batchSize = input.analysisBatchSize ?? 3;
 
     try {
-      // ── Phase 1: Research ────────────────────────────────────────────
+      // ── Phase 1: Research ──────────────────────────────────────
       console.log(`[Orchestrator] Starting research for: "${input.query}" (maxResults: ${input.maxResults ?? "unlimited"})`);
       const researchAgent = await loadAgentConfig("research");
 
@@ -58,7 +58,6 @@ export class AgentOrchestrator {
       let leadIds = this.extractLeadIdsFromToolCalls(researchResult.toolCalls);
 
       // ── Research Fallback ──────────────────────────────────────────
-      // If no leads found, try broader queries before giving up
       if (leadIds.length === 0) {
         console.log(`[Orchestrator] No leads from initial query, trying broader search`);
 
@@ -96,10 +95,10 @@ export class AgentOrchestrator {
               console.warn(`[Orchestrator] Web search fallback failed: ${err instanceof Error ? err.message : String(err)}`);
             }
           }
-        }
 
-        if (leadIds.length === 0) {
-          console.log(`[Orchestrator] No leads found after all fallback attempts`);
+          if (leadIds.length === 0) {
+            console.log(`[Orchestrator] No leads found after all fallback attempts`);
+          }
         }
       }
 
@@ -121,8 +120,9 @@ export class AgentOrchestrator {
         return this.finalize(input.pipelineRunId, totalLeadsDiscovered, totalLeadsAnalyzed, totalOutreachSent, errors);
       }
 
-      // ── Phase 2: Analysis ────────────────────────────────────────────
+      // ── Phase 2: Analysis ──────────────────────────────────────
       console.log(`[Orchestrator] Starting analysis for ${leadIds.length} leads (batch size: ${batchSize})`);
+
       const leads = await prisma.lead.findMany({
         where: { id: { in: leadIds } },
         include: { analyses: { orderBy: { analyzedAt: "desc" } } },
@@ -135,7 +135,6 @@ export class AgentOrchestrator {
         const analysisAgent = await loadAgentConfig("analysis");
         for (let i = 0; i < leadsWithWebsites.length; i += batchSize) {
           const batch = leadsWithWebsites.slice(i, i + batchSize);
-
           for (const lead of batch) {
             try {
               const leadContext = JSON.stringify({
@@ -158,11 +157,9 @@ export class AgentOrchestrator {
               const msg = err instanceof Error ? err.message : String(err);
               const isTimeout = msg.toLowerCase().includes("timeout") || msg.toLowerCase().includes("timed out");
 
-              // ── Analysis Error Tolerance ──────────────────────────────
               if (isTimeout) {
                 console.warn(`[Orchestrator] Analysis timeout for ${lead.businessName}, retrying with extended timeout`);
                 try {
-                  // Retry once — the tool itself handles the longer timeout
                   const leadContext = JSON.stringify({
                     id: lead.id,
                     businessName: lead.businessName,
@@ -189,7 +186,6 @@ export class AgentOrchestrator {
               } else {
                 errors.push(`Analysis failed for ${lead.businessName}: ${msg}`);
               }
-              // Continue with remaining leads regardless
             }
           }
         }
@@ -202,7 +198,7 @@ export class AgentOrchestrator {
         data: { leadsAnalyzed: totalLeadsAnalyzed },
       });
 
-      // ── Phase 3: Outreach ────────────────────────────────────────────
+      // ── Phase 3: Outreach ──────────────────────────────────────
       console.log(`[Orchestrator] Starting outreach for analyzed leads`);
       const analyzedLeads = await prisma.lead.findMany({
         where: {
@@ -213,11 +209,12 @@ export class AgentOrchestrator {
       });
 
       const outreachAgent = await loadAgentConfig("outreach");
+      const outreachLanguage = input.language ?? "en";
       for (const lead of analyzedLeads) {
         try {
           const latestAnalysis = lead.analyses[0];
           const outreachContext = JSON.stringify({
-            language: input.language ?? "en",
+            language: outreachLanguage,
             lead: {
               id: lead.id,
               businessName: lead.businessName,
@@ -238,12 +235,14 @@ export class AgentOrchestrator {
                   revenueImpact: latestAnalysis.revenueImpact,
                 }
               : null,
-          });
+          }, null, 2);
+
+          const outreachPrompt = `IMPORTANT: Write this email in ${outreachLanguage === "nl" ? "Dutch" : outreachLanguage === "ar" ? "Arabic" : "English"}. You MUST pass language: "${outreachLanguage}" to the render_template tool.\n\n${outreachContext}`;
 
           await runAgentWithLogging(
             outreachAgent,
             { agentId: outreachAgent.id, pipelineRunId: input.pipelineRunId, phase: "outreach" },
-            outreachContext,
+            outreachPrompt,
           );
           totalOutreachSent++;
         } catch (err) {
@@ -262,10 +261,6 @@ export class AgentOrchestrator {
     return this.finalize(input.pipelineRunId, totalLeadsDiscovered, totalLeadsAnalyzed, totalOutreachSent, errors);
   }
 
-  /**
-   * Extract lead IDs from save_lead tool call results.
-   * Each save_lead call returns JSON like {"id":"clxxx...", "businessName":"..."}.
-   */
   private extractLeadIdsFromToolCalls(toolCalls: Array<{ tool: string; output: string }>): string[] {
     const ids: string[] = [];
     for (const call of toolCalls) {
