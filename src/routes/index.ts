@@ -37,7 +37,7 @@ import {
 } from "../lib/email/gmail-oauth.js";
 import { resetProviderCache } from "../lib/email/client.js";
 import { PROVIDER_DEFAULTS } from "../lib/ai/providers/defaults.js";
-import { testProvider } from "../lib/ai/providers/registry.js";
+import { testProvider, getActiveProvider } from "../lib/ai/providers/registry.js";
 
 // In-memory CSRF state for OAuth flow (single-user, short-lived)
 const oauthStates = new Map<string, { expires: number }>();
@@ -1685,7 +1685,7 @@ export function registerRoutes(app: FastifyInstance) {
     isActive: z.boolean().default(true),
   });
 
-  // GET /api/ai/providers — list all providers
+  // GET /api/ai/providers — list all providers + active provider
   app.get("/api/ai/providers", async (_req, reply) => {
     const providers = await prisma.aiProvider.findMany({ orderBy: { isDefault: "desc" } });
     // Mask API keys in response
@@ -1693,7 +1693,19 @@ export function registerRoutes(app: FastifyInstance) {
       ...p,
       apiKey: p.apiKey ? `${p.apiKey.slice(0, 8)}${"*".repeat(8)}` : null,
     }));
-    return reply.send({ providers: masked, defaults: PROVIDER_DEFAULTS });
+    // Include currently active provider (from DB or env fallback)
+    const activeProvider = await getActiveProvider();
+    return reply.send({
+      providers: masked,
+      defaults: PROVIDER_DEFAULTS,
+      activeProvider: {
+        name: activeProvider.name,
+        providerType: activeProvider.providerType,
+        baseUrl: activeProvider.baseUrl,
+        model: activeProvider.model,
+        isEnvFallback: !activeProvider.id,
+      },
+    });
   });
 
   // POST /api/ai/providers — create provider

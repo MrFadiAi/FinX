@@ -181,7 +181,9 @@ Two tabs:
 
 ### Settings (`/settings`)
 
-Manage data — clear all data, re-seed agents, import/export CSV.
+- **AI Providers** — Configure and switch between 8 AI providers (GLM, Anthropic, OpenAI, Ollama, DeepSeek, Groq, MiniMax, Kimi). Test connections and set a default.
+- **Email Providers** — Connect Gmail (OAuth2), configure SMTP (e.g., Namecheap Private Email), or use Resend. Switch providers from the dashboard.
+- **Data Management** — Clear all data, re-seed agents, import/export CSV.
 
 ## Language Support
 
@@ -195,6 +197,95 @@ Outreach emails can be generated in three languages:
 
 Select the language from the dropdown on the **Agents > Pipeline** tab before running a pipeline. Default is English.
 
+## Key Features
+
+### Multi-AI Provider System
+
+Switch between 8 AI providers from the dashboard — no code changes needed:
+
+| Provider | Protocol | Notes |
+|----------|----------|-------|
+| GLM / ZhipuAI | OpenAI | Default, well-tested |
+| Anthropic | Messages API | Claude models |
+| OpenAI | OpenAI | GPT models |
+| Ollama | OpenAI | Local models, free |
+| DeepSeek | OpenAI | Cost-effective |
+| Groq | OpenAI | Fast inference |
+| MiniMax | OpenAI | Chinese market |
+| Kimi / Moonshot | OpenAI | Long context |
+
+Configure API keys, base URLs, and models per provider. Test connections and set a default — all from the Settings page.
+
+### Multi-Email Provider System
+
+Send outreach emails through 3 different providers:
+
+- **Gmail** — Full OAuth2 flow (authorize, auto-refresh tokens). Use your Gmail account.
+- **SMTP** — Any SMTP server (Namecheap Private Email, Outlook, etc.). Pre-configured defaults for Namecheap.
+- **Resend** — API-based email delivery.
+
+Switch providers from the Settings page. Without any email provider configured, emails are saved as drafts.
+
+### Agent Tools (21 Tools)
+
+Each agent has access to 21 registered tools:
+
+| Tool | Purpose |
+|------|---------|
+| `web_search` | Search the web via SearXNG |
+| `scrape_page` | Scrape website content (HTML or text) |
+| `check_website` | Check if a URL is live |
+| `run_lighthouse` | Run Lighthouse performance audit |
+| `detect_tech` | Detect website tech stack (Playwright) |
+| `take_screenshot` | Capture website screenshot |
+| `extract_emails` | Find email addresses on a page |
+| `extract_social_links` | Find social media profiles |
+| `check_ssl` | Check SSL/TLS certificate validity and expiry |
+| `check_mx` | Verify email domain MX records |
+| `check_mobile_friendly` | Score mobile responsiveness |
+| `domain_age_check` | Check domain registration age (RDAP) |
+| `get_place_details` | Fetch Google Business profile + reviews |
+| `competitor_compare` | Find competitors via SearXNG |
+| `kvk_search` | Search Dutch Chamber of Commerce |
+| `google_places_search` | Search Google Places API |
+| `save_lead` | Save business to database |
+| `save_analysis` | Save website analysis results |
+| `save_outreach` | Save outreach email draft |
+| `render_template` | Render email template (EN/NL/AR) |
+| `send_email` | Send an approved email |
+
+### Agent Skills System
+
+Skills inject validation rules into agent prompts at runtime:
+
+| Skill | Agent | Purpose |
+|-------|-------|---------|
+| Dutch Email Quality | Outreach | Checks formal register consistency, anglicism detection, word limits |
+| Outreach Specificity | Outreach | Requires minimum 2 specific data references per email |
+| Analysis Completeness | Analysis | Validates required fields, numeric scores, prioritized recommendations |
+
+### Lead Scoring
+
+Automatic lead scoring on a 0-100 scale:
+
+- **Data Completeness (0-30)**: business name, city, industry, address, KVK number
+- **Website Quality (0-40)**: has website, website analysis score
+- **Contactability (0-30)**: email, phone, valid MX records, social profiles
+
+Leads are categorized as **Cold** (< 40), **Warm** (40-70), or **Hot** (> 70).
+
+### Bulk Operations
+
+- **Bulk Analyze** — Queue analysis for up to 100 leads with websites
+- **Bulk Outreach** — Queue outreach generation for up to 100 analyzed leads
+- **Bulk Status Update** — Batch lead status transitions
+- **CSV Import** — Import leads with auto-header detection (English, Dutch, snake_case)
+- **CSV Export** — Export leads and outreaches (filtered, up to 5000 rows)
+
+### PDF Reports
+
+Generate branded PDF reports for any analysis — includes score breakdown, findings, opportunities, and recommendations. Available via `/api/analyses/:id/report`.
+
 ## Architecture
 
 ```
@@ -203,33 +294,38 @@ FindX/
 │   ├── server.ts                 # API entry point (port 3001)
 │   ├── routes/index.ts           # All API endpoints
 │   ├── agents/                   # AI agent pipeline system
-│   │   ├── core/                 # Agent registry, runner, tools, prompts
+│   │   ├── core/                 # Agent registry, runner, tools, skills, prompts
+│   │   │   ├── skills/           # 3 validated agent skills
+│   │   │   └── tools/            # 21 registered tools
 │   │   └── orchestrator/         # Pipeline orchestrator (Research → Analysis → Outreach)
 │   ├── lib/
 │   │   ├── db/client.ts          # Prisma database client
-│   │   ├── ai/client.ts          # AI client (GLM/OpenAI-compatible)
-│   │   ├── email/client.ts       # Resend email client
+│   │   ├── ai/                   # Multi-provider AI system
+│   │   │   └── providers/        # 8 providers, 2 protocol adapters, registry
+│   │   ├── email/                # Multi-provider email system
+│   │   │   └── providers/        # Gmail (OAuth2), SMTP, Resend
 │   │   ├── browser/client.ts     # Lightpanda + Playwright browser
 │   │   └── queue/index.ts        # BullMQ queue helpers
 │   ├── modules/
 │   │   ├── discovery/            # Lead discovery (KVK + Google Places)
-│   │   ├── analyzer/             # Website analysis (Lighthouse + AI)
-│   │   ├── outreach/             # AI email generation and sending
+│   │   ├── analyzer/             # Website analysis (Lighthouse + AI + PDF reports)
+│   │   ├── outreach/             # AI email generation (21 templates × 3 languages)
 │   │   ├── pipeline/             # Pipeline stage management
-│   │   ├── leads/                # Bulk actions, CSV import/export
+│   │   ├── leads/                # Lead scoring, bulk actions, CSV import/export
 │   │   └── import-export/        # CSV parsing utilities
 │   └── workers/                  # BullMQ background job workers
 │       ├── queues.ts             # 6 named queues
-│       ├── discovery.ts           # Discovery worker
-│       ├── analysis.ts            # Analysis worker
-│       └── outreach.ts            # Outreach worker
+│       ├── agent-worker.ts       # Agent pipeline worker
+│       ├── discovery.ts          # Discovery worker
+│       ├── analysis.ts           # Analysis worker
+│       └── outreach.ts           # Outreach worker
 ├── web/                          # Frontend (Next.js 15, React 19, Tailwind 4)
 │   ├── app/
 │   │   ├── page.tsx              # Dashboard
 │   │   ├── agents/page.tsx       # Agent pipeline runner + management
-│   │   ├── agents/[name]/page.tsx # Agent detail (editable config)
-│   │   ├── pipeline/page.tsx     # Kanban board
-│   │   └── settings/page.tsx     # Settings & data management
+│   │   ├── agents/[name]/page.tsx # Agent detail (editable config + skills)
+│   │   ├── pipeline/page.tsx     # Kanban board (drag-and-drop)
+│   │   └── settings/page.tsx     # AI providers + email providers + data management
 │   ├── components/               # React components (kanban, leads, analysis, etc.)
 │   └── lib/
 │       ├── api.ts                # API client
@@ -240,10 +336,11 @@ FindX/
 │   ├── analysis/                 # IDENTITY.md, SOUL.md, TOOLS.md
 │   └── outreach/                 # IDENTITY.md, SOUL.md, TOOLS.md
 ├── prisma/
-│   ├── schema.prisma             # Database schema
+│   ├── schema.prisma             # Database schema (13 models)
 │   ├── seed.ts                   # Seed data
 │   └── migrations/               # Database migrations
 ├── docker-compose.yml            # PostgreSQL + Redis + Lightpanda + SearXNG
+├── searxng/settings.yml          # SearXNG configuration
 ├── .env.example                  # Environment variables template
 ├── CLAUDE.md                     # AI coding assistant instructions
 └── package.json                  # Workspace root
@@ -256,14 +353,15 @@ FindX/
 | API | Fastify (Node.js, TypeScript, ESM) |
 | Database | PostgreSQL 16 via Prisma ORM |
 | Queues | BullMQ (Redis-backed) |
-| AI | GLM (OpenAI-compatible API) |
-| Email | Resend |
+| AI | Multi-provider: GLM, Anthropic, OpenAI, Ollama, DeepSeek, Groq, MiniMax, Kimi |
+| Email | Multi-provider: Gmail (OAuth2), SMTP (Nodemailer), Resend |
 | Browser | Lightpanda (CDP, low RAM) + Playwright Chromium fallback |
 | Search | SearXNG (self-hosted meta search, 70+ engines) |
 | Frontend | Next.js 15, React 19, Tailwind 4 |
 | Scraping | Cheerio + Playwright |
 | Business Data | KVK Open API, Google Places API |
 | Audits | Lighthouse |
+| Reports | PDFKit (branded PDF reports) |
 
 ## Available Scripts
 
@@ -333,8 +431,38 @@ All endpoints are under `/api/`.
 | GET | `/api/agents/name/:name` | Get agent by name |
 | PATCH | `/api/agents/name/:name` | Update agent config |
 | POST | `/api/agents/seed` | Re-seed default agents |
-| GET | `/api/agents/tools` | List all 16 registered tools |
+| GET | `/api/agents/tools` | List all 21 registered tools |
 | GET | `/api/agents/logs` | View agent execution logs |
+| GET | `/api/agents/:id/skills` | List agent skills |
+| POST | `/api/agents/:id/skills` | Create agent skill |
+| PATCH | `/api/agents/:id/skills/:skillId` | Update agent skill |
+| DELETE | `/api/agents/:id/skills/:skillId` | Delete agent skill |
+
+### AI Providers
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/ai-providers` | List all configured providers |
+| POST | `/api/ai-providers` | Add a new provider |
+| PATCH | `/api/ai-providers/:id` | Update provider config |
+| DELETE | `/api/ai-providers/:id` | Remove a provider |
+| POST | `/api/ai-providers/:id/test` | Test provider connection |
+| POST | `/api/ai-providers/:id/default` | Set as default provider |
+| GET | `/api/ai-providers/defaults` | Get provider defaults |
+
+### Email Providers
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/email/provider` | Get current email provider status |
+| GET | `/api/email/gmail/auth-url` | Get Gmail OAuth2 authorization URL |
+| GET | `/api/email/gmail/callback` | Gmail OAuth2 callback (exchange code for tokens) |
+| DELETE | `/api/email/gmail` | Disconnect Gmail |
+| GET | `/api/email/smtp` | Get SMTP config |
+| POST | `/api/email/smtp` | Save SMTP config |
+| POST | `/api/email/smtp/test` | Send test email via SMTP |
+| GET | `/api/email/settings` | Get email settings (default provider) |
+| POST | `/api/email/settings` | Set email settings (default provider) |
 
 ### Other
 
@@ -342,7 +470,7 @@ All endpoints are under `/api/`.
 |--------|------|-------------|
 | GET | `/api/health` | Health check |
 | GET | `/api/pipeline` | Pipeline stages with lead counts |
-| GET | `/api/dashboard/stats` | Dashboard metrics |
+| GET | `/api/dashboard/stats` | Dashboard metrics + score distribution |
 | POST | `/api/webhooks/resend` | Resend email tracking (open/reply/bounce) |
 
 ## Example Usage
@@ -376,15 +504,22 @@ curl -X POST http://localhost:3001/api/leads/{leadId}/outreach/generate \
 
 ## Database Schema
 
+13 Prisma models:
+
 | Model | Description | Key Fields |
 |-------|-------------|------------|
-| **Lead** | Core business record | businessName, city, website, status, leadScore |
-| **Analysis** | Website audit results | score (0-100), findings, opportunities, techStack |
-| **Outreach** | Email record | subject, body, tone, language, status |
+| **Lead** | Core business record | businessName, city, website, status, leadScore, kvkNumber, source |
+| **Analysis** | Website audit results | score (0-100), findings, opportunities, techStack, socialPresence, competitors, serviceGaps, revenueImpact |
+| **Outreach** | Email record | subject, body, tone, language, status, personalizedDetails |
 | **PipelineStage** | Kanban columns | name, order |
-| **Agent** | AI agent config | identityMd, soulMd, toolsMd, toolNames |
+| **Agent** | AI agent config | identityMd, soulMd, toolsMd, toolNames, model, pipelineOrder |
+| **AgentSkill** | Agent validation rules | promptAdd, toolNames, sortOrder |
 | **AgentLog** | Execution logs | phase, tokens, duration, output |
-| **AgentPipelineRun** | Pipeline run record | query, status, leadsFound, emailsDrafted |
+| **AgentPipelineRun** | Pipeline run record | query, status, leadsFound, leadsAnalyzed, emailsDrafted |
+| **AiProvider** | AI provider config | type (8 enums), apiKey, baseUrl, model, isDefault |
+| **SmtpConfig** | SMTP email config | host, port, user, fromEmail, fromName |
+| **EmailSetting** | Email preferences | defaultProvider (gmail/smtp/resend) |
+| **EmailProviderToken** | OAuth2 tokens | provider, accessToken, refreshToken, expiry |
 
 **Lead statuses**: `discovered` → `analyzing` → `analyzed` → `contacting` → `responded` → `qualified` → `won` / `lost`
 
@@ -392,15 +527,15 @@ curl -X POST http://localhost:3001/api/leads/{leadId}/outreach/generate \
 
 ## Agent Pipeline
 
-The core of FindX is a 3-phase AI agent pipeline:
+The core of FindX is a 3-phase AI agent pipeline with 21 tools and 3 validated skills:
 
-1. **Research Agent** — Takes a search query (e.g., "restaurants in Amsterdam") and finds matching businesses across multiple countries using web search, local business registries (KVK, Companies House, Handelsregister, etc.), and Google Places. Saves them as leads.
+1. **Research Agent** — Takes a search query (e.g., "restaurants in Amsterdam") and finds matching businesses across multiple countries using web search (SearXNG), local business registries (KVK, Companies House, Handelsregister, etc.), and Google Places. Saves them as leads with automatic deduplication.
 
-2. **Analysis Agent** — For each lead with a website, runs Lighthouse audits, detects the tech stack, checks SSL, scores the website 0-100, Identifies improvement opportunities.
+2. **Analysis Agent** — For each lead with a website, runs Lighthouse audits, detects the tech stack, checks SSL, scores the website 0-100, checks mobile-friendliness, domain age, and identifies automation opportunities with revenue impact estimates. Generates branded PDF reports.
 
-3. **Outreach Agent** — Reads analysis results and generates personalized cold emails in English (`en`), Dutch (`nl`), or Arabic (`ar`). References specific findings (e.g., "Your website loads in 8.2 seconds").
+3. **Outreach Agent** — Reads analysis results and generates personalized cold emails in English (`en`), Dutch (`nl`), or Arabic (`ar`) from 21 trilingual templates (7 categories x 3 languages). References specific findings (e.g., "Your website loads in 8.2 seconds"). Skills validate email quality before saving.
 
-Agents are configurable through the dashboard — edit identity, personality, tools, and skills at `/agents/[name]`.
+Agents are fully configurable through the dashboard — edit identity, personality, tools, skills, and even the AI model used per agent at `/agents/[name]`.
 
 ## Troubleshooting
 

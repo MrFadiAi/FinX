@@ -112,6 +112,7 @@ export default function SettingsPage() {
   // AI provider state
   const [aiProviders, setAiProviders] = useState<AiProvider[]>([]);
   const [aiDefaults, setAiDefaults] = useState<Record<string, AiProviderDefaults>>({});
+  const [activeProvider, setActiveProvider] = useState<{ name: string; providerType: string; baseUrl: string | null; model: string; isEnvFallback: boolean } | null>(null);
   const [aiLoading, setAiLoading] = useState(true);
   const [aiError, setAiError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -146,6 +147,7 @@ export default function SettingsPage() {
       const data = await getAiProviders();
       setAiProviders(data.providers);
       setAiDefaults(data.defaults);
+      setActiveProvider(data.activeProvider ?? null);
       setAiError(null);
     } catch (err) {
       setAiError(err instanceof Error ? err.message : "Failed to load AI providers");
@@ -414,6 +416,33 @@ export default function SettingsPage() {
             Add Provider
           </button>
         </div>
+
+        {/* Active Provider Banner */}
+        {activeProvider && (
+          <div className="flex items-center gap-3 px-3 py-2.5 bg-emerald-900/20 border border-emerald-700/30 rounded-lg">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-600/20">
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-emerald-300">Active Provider</span>
+                {activeProvider.isEnvFallback && (
+                  <span className="px-1.5 py-0.5 text-[10px] font-medium bg-amber-600/30 text-amber-300 rounded">
+                    ENV FALLBACK
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 truncate">
+                {PROVIDER_TYPES.find((t) => t.value === activeProvider.providerType)?.label ?? activeProvider.providerType}
+                {" "}&middot;{" "}
+                <span className="text-slate-300 font-medium">{activeProvider.model}</span>
+                {activeProvider.baseUrl && (
+                  <>{" "}&middot; <span className="text-slate-500 truncate">{activeProvider.baseUrl}</span></>
+                )}
+              </p>
+            </div>
+          </div>
+        )}
 
         {aiLoading ? (
           <div className="flex items-center gap-2 text-xs text-slate-500">

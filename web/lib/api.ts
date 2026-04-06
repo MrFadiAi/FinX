@@ -345,9 +345,18 @@ export function testSmtpConfig(): Promise<{ success: boolean; error?: string; me
 
 // --- AI Providers ---
 
+export interface ActiveAiProvider {
+  name: string;
+  providerType: AiProviderType;
+  baseUrl: string | null;
+  model: string;
+  isEnvFallback: boolean;
+}
+
 export function getAiProviders(): Promise<{
   providers: AiProvider[];
   defaults: Record<string, AiProviderDefaults>;
+  activeProvider: ActiveAiProvider;
 }> {
   return fetchApi("/ai/providers");
 }
