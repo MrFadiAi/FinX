@@ -40,7 +40,7 @@ export const extractStructuredDataTool: Tool = {
       // JSON-LD
       $('script[type="application/ld+json"]').each((_, el) => {
         try {
-          const data = JSON.parse($(el).html());
+          const data = JSON.parse($(el).html() || "{}");
           const graph = data["@graph"];
           const graphType = data["@type"];
           if (graph && Array.isArray(graph)) {

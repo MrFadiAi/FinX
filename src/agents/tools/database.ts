@@ -186,6 +186,46 @@ export const saveAnalysisTool: Tool = {
         type: "string",
         description: 'JSON object: {totalEstimatedLoss: number, currency:"EUR", breakdown:[{area,estimatedLoss,reasoning}]}',
       },
+      crawlData: {
+        type: "string",
+        description: "JSON object from crawl_subpages: multi-page crawl results with per-page data (title, wordCount, headings, contact info)",
+      },
+      structuredData: {
+        type: "string",
+        description: "JSON object from extract_structured_data: Schema.org/JSON-LD/OG/microdata parsed from the website",
+      },
+      formData: {
+        type: "string",
+        description: "JSON object from analyze_forms_cta: form friction analysis, CTA detection, conversion path assessment",
+      },
+      imageAudit: {
+        type: "string",
+        description: "JSON object from audit_images: image quality audit with alt text, dimensions, lazy loading, format checks",
+      },
+      complianceAudit: {
+        type: "string",
+        description: "JSON object from check_cookies_gdpr + check_accessibility_wcag: GDPR/cookie and WCAG compliance results",
+      },
+      contentAudit: {
+        type: "string",
+        description: "JSON object from check_content_freshness: content freshness scores, blog activity, stale content detection",
+      },
+      seoAudit: {
+        type: "string",
+        description: "JSON object from analyze_seo_deep + validate_schema: deep SEO analysis and structured data validation",
+      },
+      securityAudit: {
+        type: "string",
+        description: "JSON object from check_security_headers: security header audit (CSP, HSTS, X-Frame-Options, etc.)",
+      },
+      competitorAnalysis: {
+        type: "string",
+        description: "JSON object from scrape_competitor_site: competitor website quick-scan results",
+      },
+      integrationData: {
+        type: "string",
+        description: "JSON object from detect_integrations: third-party integration detection (payment, booking, analytics, chat)",
+      },
     },
     required: ["leadId"],
   },
@@ -203,6 +243,16 @@ export const saveAnalysisTool: Tool = {
     const competitors = parseJson(input.competitors, []);
     const serviceGaps = parseJson(input.serviceGaps, []);
     const revenueImpact = parseJson(input.revenueImpact, {});
+    const crawlData = parseJson(input.crawlData, {});
+    const structuredData = parseJson(input.structuredData, {});
+    const formData = parseJson(input.formData, {});
+    const imageAudit = parseJson(input.imageAudit, {});
+    const complianceAudit = parseJson(input.complianceAudit, {});
+    const contentAudit = parseJson(input.contentAudit, {});
+    const seoAudit = parseJson(input.seoAudit, {});
+    const securityAudit = parseJson(input.securityAudit, {});
+    const competitorAnalysis = parseJson(input.competitorAnalysis, {});
+    const integrationData = parseJson(input.integrationData, {});
 
     const analysis = await prisma.analysis.create({
       data: {
@@ -215,6 +265,16 @@ export const saveAnalysisTool: Tool = {
         competitors,
         serviceGaps,
         revenueImpact,
+        crawlData,
+        structuredData,
+        formData,
+        imageAudit,
+        complianceAudit,
+        contentAudit,
+        seoAudit,
+        securityAudit,
+        competitorAnalysis,
+        integrationData,
       },
     });
 

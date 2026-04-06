@@ -103,7 +103,7 @@ export const checkSecurityHeadersTool: Tool = {
         header: "X-XSS-Protection",
         present: !!xxss,
         value: xxss,
-        status: xxss ? "info" : "info",
+        status: "good" as const,
         description: xxss ? "XSS filter header present (deprecated, use CSP instead)" : "Not set (deprecated header, CSP preferred)",
       });
 

@@ -164,7 +164,7 @@ When calling save_analysis, you MUST provide these as JSON strings:
 - \`competitors\`: [{name, website, strengths, weaknesses}] — top 2-3 competitors
 - \`serviceGaps\`: [{service, need:'high'|'medium'|'low', reasoning, estimatedRevenueImpact}] — services a software engineer could provide
 - \`revenueImpact\`: {totalEstimatedLoss, currency:'EUR', breakdown:[{area, estimatedLoss, reasoning}]}`,
-    toolNames: ["run_lighthouse", "detect_tech", "scrape_page", "check_website", "take_screenshot", "check_ssl", "extract_social_links", "get_place_details", "web_search", "save_analysis"],
+    toolNames: ["run_lighthouse", "detect_tech", "scrape_page", "check_website", "take_screenshot", "check_ssl", "extract_social_links", "get_place_details", "web_search", "save_analysis", "crawl_subpages", "extract_structured_data", "analyze_forms_cta", "audit_images", "check_cookies_gdpr", "check_accessibility_wcag", "check_content_freshness", "detect_integrations", "analyze_seo_deep", "check_broken_links", "analyze_performance", "check_security_headers", "scrape_competitor_site", "deep_place_details", "validate_schema"],
     pipelineOrder: 2,
     isActive: true,
   },

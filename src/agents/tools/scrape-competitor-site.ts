@@ -61,8 +61,8 @@ export const scrapeCompetitorSiteTool: Tool = {
       // Contact info
       const phones: string[] = [];
       const emails: string[] = [];
-      $('a[href^="tel:"]').each((_, el) => phones.push($(el).text().trim()));
-      $('a[href^="mailto:"]').each((_, el) => emails.push($(el).attr("href")?.replace("mailto:", "") || ""));
+      $('a[href^="tel:"]').each((_, el) => { phones.push($(el).text().trim()); });
+      $('a[href^="mailto:"]').each((_, el) => { emails.push($(el).attr("href")?.replace("mailto:", "") || ""); });
 
       // Address
       let address = "";

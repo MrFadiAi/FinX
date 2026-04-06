@@ -155,7 +155,7 @@ export const analyzeFormsCtaTool: Tool = {
         phoneVisible,
         phoneNumbers: visiblePhones.slice(0, 5),
         assessment: {
-          hasContactForm,
+          hasContactForm: hasForm,
           hasPrimaryCta,
           phoneVisible,
           conversionFriction: !hasForm && !hasPrimaryCta ? "high" : lowestFriction >= 4 ? "high" : lowestFriction >= 3 ? "medium" : "low",

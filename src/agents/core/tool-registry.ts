@@ -19,6 +19,21 @@ import { placeDetailsTool } from "../tools/place-details.js";
 import { competitorCompareTool } from "../tools/competitor-compare.js";
 import { domainAgeCheckTool } from "../tools/domain-age-check.js";
 import { checkMobileFriendlyTool } from "../tools/check-mobile-friendly.js";
+import { crawlSubpagesTool } from "../tools/crawl-subpages.js";
+import { extractStructuredDataTool } from "../tools/extract-structured-data.js";
+import { analyzeFormsCtaTool } from "../tools/analyze-forms-cta.js";
+import { auditImagesTool } from "../tools/audit-images.js";
+import { checkCookiesGdprTool } from "../tools/check-cookies-gdpr.js";
+import { checkAccessibilityWcagTool } from "../tools/check-accessibility-wcag.js";
+import { checkContentFreshnessTool } from "../tools/check-content-freshness.js";
+import { detectIntegrationsTool } from "../tools/detect-integrations.js";
+import { analyzeSeoDeepTool } from "../tools/analyze-seo-deep.js";
+import { checkBrokenLinksTool } from "../tools/check-broken-links.js";
+import { analyzePerformanceTool } from "../tools/analyze-performance.js";
+import { checkSecurityHeadersTool } from "../tools/check-security-headers.js";
+import { scrapeCompetitorSiteTool } from "../tools/scrape-competitor-site.js";
+import { deepPlaceDetailsTool } from "../tools/deep-place-details.js";
+import { validateSchemaTool } from "../tools/validate-schema.js";
 
 const ALL_TOOLS: Tool[] = [
   webSearchTool,
@@ -42,6 +57,21 @@ const ALL_TOOLS: Tool[] = [
   competitorCompareTool,
   domainAgeCheckTool,
   checkMobileFriendlyTool,
+  crawlSubpagesTool,
+  extractStructuredDataTool,
+  analyzeFormsCtaTool,
+  auditImagesTool,
+  checkCookiesGdprTool,
+  checkAccessibilityWcagTool,
+  checkContentFreshnessTool,
+  detectIntegrationsTool,
+  analyzeSeoDeepTool,
+  checkBrokenLinksTool,
+  analyzePerformanceTool,
+  checkSecurityHeadersTool,
+  scrapeCompetitorSiteTool,
+  deepPlaceDetailsTool,
+  validateSchemaTool,
 ];
 
 const registry = new Map<string, Tool>();
